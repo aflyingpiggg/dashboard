@@ -11,7 +11,7 @@ time_now = st.slider('当前时间', 0, 40, value=0)
 st.write('当前时间为',time_now)
 stat=[]
 #根据时间重新写入机床状态
-with open('data/甘特图暂用.csv', 'r') as f:
+with open('data\甘特图暂用.csv', 'r') as f:
     reader = csv.DictReader(f)
     for row in reader:
         if int(row['endtime']) < time_now:
@@ -22,7 +22,7 @@ with open('data/甘特图暂用.csv', 'r') as f:
                 row['状态'] = '进行中'
         stat.append(row)
 stat_df = pd.DataFrame(stat)
-stat_df.to_csv('data/甘特图暂用2.csv', index=False)
+stat_df.to_csv('data\甘特图暂用2.csv', index=False)
 a1_width = 3
 a2_width = 1
 col_1, col_2 = st.columns((a1_width,a2_width))
@@ -30,7 +30,7 @@ with (col_1):
     #生成甘特图
     st.header('生产排程')
     fig, ax = plt.subplots()
-    with open('data/甘特图暂用.csv', 'r') as f:
+    with open('data\甘特图暂用.csv', 'r') as f:
         reader = csv.DictReader(f)
         for row in reader:
             start = int(row['startime'])
@@ -66,12 +66,12 @@ with (col_1):
      #绘制表格
     tab1, tab2 = st.tabs(['当前生产任务', '全部生产任务'])
     with tab1:
-      dff = pd.read_csv('data/甘特图暂用2.csv')
+      dff = pd.read_csv('data\甘特图暂用2.csv')
       dff_timeselection = dff.query('endtime>@time_now & startime<@time_now')
       dff_timeselection2 = dff_timeselection.iloc[:, :8]
       st.dataframe(dff_timeselection2.head(), width=1000,height=300)
     with tab2:
-        df2 = pd.read_csv('data/甘特图暂用2.csv')
+        df2 = pd.read_csv('data\甘特图暂用2.csv')
         st.dataframe(df2, width=1000,height=300)
 with col_2:
     #机床状态
@@ -105,15 +105,15 @@ with col_2:
     #生产数据部分
     st.subheader('任务进行情况')
     stat = []
-    with open('data/甘特图暂用.csv', 'r') as f:
+    with open('data\甘特图暂用.csv', 'r') as f:
         reader = csv.DictReader(f)
         for row in reader:
             if int(row['endtime']) > time_now and int(row['startime']) < time_now:#int(row['endtime']) >= time_now and int(row['startime']) <= time_now
                 k = [row['机床编号'], (time_now-int(row['startime']))/(int(row['endtime'])-int(row['startime']))]
                 stat.append(k)
     stat_df = pd.DataFrame(stat)
-    stat_df.to_csv('data/机床运行状态.csv',index=False)
-    stat_now = pd.read_csv('data/机床运行状态.csv')
+    stat_df.to_csv('data\机床运行状态.csv',index=False)
+    stat_now = pd.read_csv('data\机床运行状态.csv')
     stat_now.columns = ['机床编号', '任务进行情况/%']
     fig_bar = px.bar(stat_now, x='任务进行情况/%', y='机床编号',width=400, height=600)
     st.plotly_chart(fig_bar)
